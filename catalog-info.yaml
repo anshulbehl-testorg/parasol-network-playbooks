@@ -1,0 +1,20 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: BLUEPRINT-testns777.rhdhtest7777
+  description: Test repo
+  tags:
+    - ansible
+    - playbook
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+    github.com/project-slug: anshulbehl-testorg/parasol-network-playbooks
+  links:
+    - url: https://devspaces.apps.sandbox-m4.g2pi.p1.openshiftapps.com/#https://github.com/anshulbehl-testorg/parasol-network-playbooks
+      title: Open Ansible project in OpenShift Dev Spaces
+      icon: web
+spec:
+  type: playbook-project
+  lifecycle: production
+  owner: user:default/anshulbehl
