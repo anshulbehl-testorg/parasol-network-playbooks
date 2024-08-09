@@ -1,0 +1,85 @@
+---
+- name: Create VPC, Subnet, IGW, Security Group, EC2 Instance
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    region: us-east-1
+    vpc_cidr: 10.0.0.60/16
+    subnet_cidr: 10.0.1.16/24
+    ec2_instance_type: t2.micro
+    ec2_instance_name: ansible-ec2-instance
+    ec2_instance_image: ami-0477b9335a5a75438
+    ec2_instance_keypair: ansible-keypair
+    ec2_instance_security_group: ansible-security-group
+    ec2_instance_count: 1
+  tasks:
+    # - name: Create a aws keypair called ansible-keypair
+    #   amazon.aws.ec2_key:
+    #     name: ansible-keypair
+    #     region: "{{ region }}"
+    #     state: present
+    #   register: ansible_keypair_key
+
+    - name: Create VPC
+      amazon.aws.ec2_vpc_net:
+        name: ansible-vpc
+        cidr_block: "{{ vpc_cidr }}"
+        region: "{{ region }}"
+        state: present
+      register: vpc
+
+    - name: Create Subnet
+      amazon.aws.ec2_vpc_subnet:
+        vpc_id: "{{ vpc.vpc.id }}"
+        cidr: "{{ subnet_cidr }}"
+        region: "{{ region }}"
+        state: present
+      register: subnet
+
+    - name: Create Internet Gateway
+      amazon.aws.ec2_vpc_igw:
+        vpc_id: "{{ vpc.vpc.id }}"
+        region: "{{ region }}"
+        state: present
+      register: igw
+
+    - name: Create Security Group
+      amazon.aws.ec2_security_group:
+        name: "{{ ec2_instance_security_group }}"
+        description: Ansible Security Group
+        vpc_id: "{{ vpc.vpc.id }}"
+        region: "{{ region }}"
+        state: present
+        rules:
+          - proto: tcp
+            from_port: 22
+            to_port: 22
+            cidr_ip: "0.0.0.0/0"
+          - proto: tcp
+            from_port: 80
+            to_port: 80
+            cidr_ip: "0.0.0.0/0"
+      register: security_group
+
+    - name: Create EC2 Instance
+      amazon.aws.ec2_instance:
+        key_name: "{{ _key_name_ }}"
+        instance_type: "{{ ec2_instance_type }}"
+        image: "{{ ec2_instance_image }}"
+        wait: true
+        group: "{{ ec2_instance_security_group }}"
+        instance_tags:
+          Name: "{{ ec2_instance_name }}"
+        exact_count: "{{ ec2_instance_count }}"
+        count_tag:
+          Name: "{{ ec2_instance_name }}"
+        vpc_subnet_id: "{{ subnet.subnet.id }}"
+        assign_public_ip: true
+        region: "{{ region }}"
+      register: ec2
+
+    - name: Add EC2 Instance to Ansible Inventory
+      ansible.builtin.add_host:
+        name: "{{ _name_ }}"
+        groups: "{{ ec2.instances }}"

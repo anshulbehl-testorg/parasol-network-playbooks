@@ -1,0 +1,11 @@
+---
+- name: Deploy Application
+  hosts: localhost
+  tasks:
+    - name: Print selected branch
+      ansible.builtin.debug:
+        msg: "Running deployment using branch: {{ scm_branch }}"
+
+    - name: Include deployment tasks from the repository
+      ansible.builtin.debug:
+        msg: "Do further operations"
