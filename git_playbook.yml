@@ -9,3 +9,7 @@
     - name: Include deployment tasks from the repository
       ansible.builtin.debug:
         msg: "Do further operations"
+
+    - name: Do further more operations
+      ansible.builtin.debug:
+        msg: "Do further more operations"
