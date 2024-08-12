@@ -12,6 +12,7 @@ collections:
   - name: amazon.aws
   - name: amazon.aws
   - name: amazon.aws
+  - name: amazon.aws
 
 # TO-DO: User's own collections can also be specified as mention below.
 # - name: my_organization.my_collection
