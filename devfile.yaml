@@ -19,11 +19,6 @@ commands:
       component: tooling-container
       commandLine: ansible-galaxy collection install -r collections/requirements.yml
       workingDir: ${PROJECT_SOURCE}
-  - id: install-collections
-    exec:
-      component: tooling-container
-      commandLine: ansible-galaxy collection install -r collections/requirements.yml
-      workingDir: ${PROJECT_SOURCE}
   - id: configure-git
     exec:
       component: tooling-container
